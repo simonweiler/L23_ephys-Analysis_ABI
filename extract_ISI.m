@@ -9,12 +9,22 @@ AP5=find(spike_count>=5);
 AP5_n=find(spike_count<5);
 dt = 1e-4;
 dy = 1e-3;
-lAP={AP5_n' AP5'}
+lAP={AP5_n' AP5'};
+
 for jj=1:2
     AP=cell2mat(lAP(jj))';
 for i=1:length(AP)
 tr5=cell2mat(traces(:,:,AP(i)));
+if jj==1;
 nr=find((spikes(:,AP(i)))>=max(spikes(:,AP(i))));
+nr_all(:,i)=length(find((spikes(:,AP(i)))>=max(spikes(:,AP(i)))));
+%nr=nr(end);
+else
+nr=[];
+nr=find(spikes(:,AP(i)));
+nr_all(:,i)=1;
+nr=nr(1);
+end
 tr5_all{:,i}=tr5(:,nr);
 for t=1:size(cell2mat(tr5_all(i)),2)
 trace_active=cell2mat(tr5_all(i));
@@ -24,7 +34,7 @@ alltrace_info(:,t) = getProfileAllSpikes(traces_analysis(:,t));
 try
 parameters{:,t,i}=alltrace_info(1,t).spikes_db.data;
 catch
-parameters{:,t,i}=NaN
+parameters{:,t,i}=NaN;
 end
 
 for tt=1:size(parameters{:,t,i},1)-1   
@@ -77,11 +87,19 @@ for i=1:length(AP)
 end 
 end
 end
-
+i=[];
 for i=1:length(AP)
-    temp_t=ISI_standard(:,:,:,i);
+    
+    temp_t=ISI_standard(:,:,nr_all(i),i);
     ISI_ave2(:,i)=nanmean(cat(3,temp_t{:}),3);
+    if isnan(ISI_ave2(:,i))==1
+     temp_t=ISI_standard(:,:,nr_all(i)-1,i);
+    ISI_ave2(:,i)=nanmean(cat(3,temp_t{:}),3);   
+    else
+    ISI_ave2(:,i)=nanmean(cat(3,temp_t{:}),3);
+    end
     ISI_ave2_smooth(:,i)=smooth(ISI_ave2(:,i),0.1,'rloess');
+    
 end
 ISI_t{:,jj}=ISI_ave2_smooth;
 end

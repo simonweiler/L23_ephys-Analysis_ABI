@@ -49,13 +49,13 @@ savefolder='R:\Share\Simon\Drago_Volker_Simon\Manuscript2018\Electrophysiology\A
 %--------------------------
 %IMPORTANT FLAGS
 disp1_2=0;%plot or not parameters 1 & 2
-par1_2=1;%calculate/extract parameters 1 & 2
-disp3=0;%same logic 
+par1_2=0;%calculate/extract parameters 1 & 2
+disp3=1;%same logic 
 par3=1;
 disp5=0;
-par5=1;
+par5=0;
 par6_13=1;
-disp6_13=0;
+disp6_13=1;
 %%%%%%%%%%%%%%%%%
 
 L23_ephys={};%empty structure for saving variables
@@ -174,13 +174,21 @@ L23_ephys.data{3,1}='ISI shape';
 L23_ephys.data{3,2}=ISI_final;%PARAMETER 3
 end
 %% 
-%%PARAMETERS: 5; trace 24 looks fuggly
+%%PARAMETERS: 5; 
 if par5==1;
 for i=1:size(traces_all,3)
 [a,b,c]=find(traces_all(:,:,i)==min(min(traces_all(:,:,i))));
 sag=traces_all(:,b,i);
-sag_s=sag-mean(sag(1:1000));
-sag_n=sag_s/-min(sag_s);
+sag_s=sag-mean(sag(1:1000));%Baseline subtracted  (starts at 0)
+sag_n=sag_s/-min(sag_s);%normalized to peak
+if ~isempty(find(sag_n(1500:10000)>-0.8));
+    sag=[];
+    sag_s=[];
+    sag_n=[];
+    sag=traces_all(:,b+1,i);
+    sag_s=sag-mean(sag(1:1000));%Baseline subtracted  (starts at 0)
+    sag_n=sag_s/-min(sag_s);%normalized to peak
+end
 sag_traces(:,i)=sag_n(1:12000,:);;%%%%%%%   PARAMETER 5    %%%%%%%%% 
 end
 i=[];
@@ -217,28 +225,53 @@ end
 %call function ephys_parameter_bins
 [AP_thresh, AP_peak, AP_width, AP_ifreq, AP_ifreq_n, AP_PSTH, AP_upstroke, AP_downstroke]= ephys_parameter_bins(traces_Rheo,size(traces_Rheo,3));
 AP_up_down_ratio=AP_upstroke./AP_downstroke;
+matr={AP_thresh, AP_peak, AP_width, AP_ifreq, AP_ifreq_n, AP_up_down_ratio};
+%replicate values wehn lees that 6 sweeps
+for k=1:6
+for i=1:length(AP_thresh);
+    temp=matr{k};
+    inter=temp(:,:,i);
+    idx_col=find(isnan(temp(1,:,i)));
+    if isempty(idx_col)
+      temp_r(:,:,i)=inter;
+    else
+    idx_rep=idx_col(1)-1;
+    col_rep=temp(:,idx_rep,i);
+    rep=repmat(col_rep,1,length(idx_col));
+    inter(:,idx_col)=rep;
+    temp_r(:,:,i)=inter;
+    
+    end
+    
+end
+temp_reshap=reshape(temp_r,[],length(AP_thresh),1);
+comb(:,:,k)=temp_reshap;
+end
+  
+AP_PSTH_r=reshape(AP_PSTH,[],144,1);
+
 if disp6_13==1
 f7=figure;set(gcf, 'Position', [200, 0, 1500, 1000]);
 for i=1:size(traces_Rheo,3)
 subplot(12,12,i)
 hold on;
-plot(AP_thresh(:,:,i));
+plot(AP_thresh_r(:,:,i));
 end
 end
 L23_ephys.data{5,1}='PSTH';
-L23_ephys.data{5,2}=AP_PSTH;%PARAMETER 6
+L23_ephys.data{5,2}=AP_PSTH_r;%PARAMETER 6
 L23_ephys.data{6,1}='Inst.firing rate';
-L23_ephys.data{6,2}=AP_ifreq;%PARAMETER 7
+L23_ephys.data{6,2}=comb(:,:,4);%PARAMETER 7
 L23_ephys.data{7,1}='Up/down';
-L23_ephys.data{7,2}=AP_up_down_ratio;%PARAMETER 8
+L23_ephys.data{7,2}=comb(:,:,6);%PARAMETER 8
 L23_ephys.data{8,1}='AP_peak';
-L23_ephys.data{8,2}=AP_peak;%PARAMETER 9
+L23_ephys.data{8,2}=comb(:,:,2);%PARAMETER 9
 L23_ephys.data{9,1}='AP_thresh';
-L23_ephys.data{9,2}=AP_thresh;%PARAMETER 11
+L23_ephys.data{9,2}=comb(:,:,1);%PARAMETER 11
 L23_ephys.data{10,1}='AP_width';
-L23_ephys.data{10,2}=AP_width;%PARAMETER 12
+L23_ephys.data{10,2}=comb(:,:,3);%PARAMETER 12
 L23_ephys.data{11,1}='Norm.Inst.firing rate';
-L23_ephys.data{11,2}=AP_ifreq_n;%PARAMETER 13
+L23_ephys.data{11,2}=comb(:,:,5);%PARAMETER 13
 %AP trough is missing -> DISCUSS
 
 % SAVE in savefolder directory   
