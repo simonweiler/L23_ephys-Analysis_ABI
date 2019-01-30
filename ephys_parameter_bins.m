@@ -65,35 +65,35 @@ end
 
 if size(alltrace_info(1,1).spikes_db(:,:).data,1)>1
 try
-vi(:,i)=interp1(time_ap,thresold_ap,[100:20:1100],'nearest','extrap');%interpolate in 51 bins
-vp(:,i)=interp1(time_ap,peak_ap,[100:20:1100],'nearest','extrap');
-vw(:,i)=interp1(time_ap,hwidth_ap,[100:20:1100],'nearest','extrap');
-vf(:,i)=interp1(time_ap,ISI_ap,[100:20:1100],'nearest','extrap');
-vsu(:,i)=interp1(time_ap,slope_up,[100:20:1100],'nearest','extrap');
-vsd(:,i)=interp1(time_ap,slope_down,[100:20:1100],'nearest','extrap');
+vi(:,i)=interp1(time_ap,thresold_ap,[100:20:1080],'nearest','extrap');%interpolate in 51 bins
+vp(:,i)=interp1(time_ap,peak_ap,[100:20:1080],'nearest','extrap');
+vw(:,i)=interp1(time_ap,hwidth_ap,[100:20:1080],'nearest','extrap');
+vf(:,i)=interp1(time_ap,ISI_ap,[100:20:1080],'nearest','extrap');
+vsu(:,i)=interp1(time_ap,slope_up,[100:20:1080],'nearest','extrap');
+vsd(:,i)=interp1(time_ap,slope_down,[100:20:1080],'nearest','extrap');
 catch
-vi(:,i)=NaN(1,51);%interpolate in 51 bins
-vp(:,i)=NaN(1,51);
-vw(:,i)=NaN(1,51);
-vf(:,i)=NaN(1,51);
-vsu(:,i)=NaN(1,51);
-vsd(:,i)=NaN(1,51);
+vi(:,i)=NaN(1,50);%interpolate in 51 bins
+vp(:,i)=NaN(1,50);
+vw(:,i)=NaN(1,50);
+vf(:,i)=NaN(1,50);
+vsu(:,i)=NaN(1,50);
+vsd(:,i)=NaN(1,50);
 end
 else
 try
-vi(:,i)=repmat(thresold_ap(1),1,51);%simply replicate if there is only one spike in entire sweep
-vp(:,i)=repmat(peak_ap(1),1,51);
-vw(:,i)=repmat(hwidth_ap(1),1,51);
-vf(:,i)=repmat(ISI_ap(1),1,51);
-vsu(:,i)=repmat(slope_up(1),1,51);
-vsd(:,i)=repmat(slope_down(1),1,51);
+vi(:,i)=repmat(thresold_ap(1),1,50);%simply replicate if there is only one spike in entire sweep
+vp(:,i)=repmat(peak_ap(1),1,50);
+vw(:,i)=repmat(hwidth_ap(1),1,50);
+vf(:,i)=repmat(ISI_ap(1),1,50);
+vsu(:,i)=repmat(slope_up(1),1,50);
+vsd(:,i)=repmat(slope_down(1),1,50);
 catch
-vi(:,i)=NaN(1,51);%interpolate in 51 bins
-vp(:,i)=NaN(1,51);
-vw(:,i)=NaN(1,51);
-vf(:,i)=NaN(1,51);
-vsu(:,i)=NaN(1,51);
-vsd(:,i)=NaN(1,51);
+vi(:,i)=NaN(1,50);%interpolate in 51 bins
+vp(:,i)=NaN(1,50);
+vw(:,i)=NaN(1,50);
+vf(:,i)=NaN(1,50);
+vsu(:,i)=NaN(1,50);
+vsd(:,i)=NaN(1,50);
 end
 end
 vf2(:,i)=histcounts(time_ap-100,20)./50;
@@ -174,14 +174,14 @@ vsu=[];
 vsd=[];
 clearvars parameters;
 end
-thresh=reshape(cell2mat(thresh),[51,6,p]);
-peak=reshape(cell2mat(peak),[51,6,p]);
-width=reshape(cell2mat(width),[51,6,p]);
-ifreq=reshape(cell2mat(ifreq),[51,6,p]);
-ifreq_n=reshape(cell2mat(ifreq_n),[51,6,p]);
+thresh=reshape(cell2mat(thresh),[50,6,p]);
+peak=reshape(cell2mat(peak),[50,6,p]);
+width=reshape(cell2mat(width),[50,6,p]);
+ifreq=reshape(cell2mat(ifreq),[50,6,p]);
+ifreq_n=reshape(cell2mat(ifreq_n),[50,6,p]);
 PSTH=reshape(cell2mat(PSTH),[20,6,p]);
-upstroke=reshape(cell2mat(upstroke),[51,6,p]);
-downstroke=reshape(cell2mat(downstroke),[51,6,p]);
+upstroke=reshape(cell2mat(upstroke),[50,6,p]);
+downstroke=reshape(cell2mat(downstroke),[50,6,p]);
 
 
 end

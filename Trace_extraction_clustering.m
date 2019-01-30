@@ -48,12 +48,12 @@ load([char(pathName) '/' list.name],'-mat');
 savefolder='R:\Share\Simon\Drago_Volker_Simon\Manuscript2018\Electrophysiology\Approach 3_ABI_feature_sPCA_GMM\out'
 %--------------------------
 %IMPORTANT FLAGS
-disp1_2=0;%plot or not parameters 1 & 2
-par1_2=0;%calculate/extract parameters 1 & 2
+disp1_2=1;%plot or not parameters 1 & 2
+par1_2=1;%calculate/extract parameters 1 & 2
 disp3=1;%same logic 
 par3=1;
-disp5=0;
-par5=0;
+disp5=1;
+par5=1;
 par6_13=1;
 disp6_13=1;
 %%%%%%%%%%%%%%%%%
@@ -107,8 +107,8 @@ end
 nr=[];
 for i=1:length(event)
 APwave=cell2mat(traces(:,:,i));
-APwaveform(:,i)=APwave(startp(:,i):startp(:,i)+300,ap(:,i));%%%%%%%  PARAMETER 1 %%%%%%%%
-APwaveform_der(:,i)=diff(APwave(startp(:,i):startp(:,i)+300,ap(:,i)));%%%%%%%   PARAMETER 2    %%%%%%%%% 
+APwaveform(:,i)=APwave(startp(:,i):startp(:,i)+100,ap(:,i));%%%%%%%  PARAMETER 1 %%%%%%%%
+APwaveform_der(:,i)=diff(APwave(startp(:,i):startp(:,i)+100,ap(:,i)));%%%%%%%   PARAMETER 2    %%%%%%%%% 
 end
 i=[];
 ap=[];
@@ -181,7 +181,7 @@ for i=1:size(traces_all,3)
 sag=traces_all(:,b,i);
 sag_s=sag-mean(sag(1:1000));%Baseline subtracted  (starts at 0)
 sag_n=sag_s/-min(sag_s);%normalized to peak
-if ~isempty(find(sag_n(1500:10000)>-0.8));
+if ~isempty(find(sag_n(1500:10000)>-0.8));%Quality check 
     sag=[];
     sag_s=[];
     sag_n=[];
@@ -252,11 +252,11 @@ AP_PSTH_r=reshape(AP_PSTH,[],144,1);
 
 if disp6_13==1
 f7=figure;set(gcf, 'Position', [200, 0, 1500, 1000]);
-for i=1:size(traces_Rheo,3)
-subplot(12,12,i)
-hold on;
-plot(AP_thresh_r(:,:,i));
-end
+% for i=1:size(traces_Rheo,3)
+% subplot(12,12,i)
+% hold on;
+% plot(AP_thresh_r(:,:,i));
+% end
 end
 L23_ephys.data{5,1}='PSTH';
 L23_ephys.data{5,2}=AP_PSTH_r;%PARAMETER 6
